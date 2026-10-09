@@ -1,5 +1,5 @@
 /**
- * AttritionIQ - High Performance Modern Interactive Engine
+ * AttritionIQ - High Performance Modern Interactive & Motion Engine
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -26,7 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const benchmarkModal = document.getElementById('benchmarkModal');
 
     // Dynamic Result Display Elements
+    const resultCard = document.getElementById('resultCard');
     const riskBadge = document.getElementById('riskBadge');
+    const gaugeContainer = document.querySelector('.radial-gauge-container');
     const gaugeCircle = document.getElementById('gaugeCircle');
     const gaugePercentage = document.getElementById('gaugePercentage');
     const verdictBanner = document.getElementById('verdictBanner');
@@ -84,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     let debounceTimer = null;
+    let currentLeavePct = 0;
     const GAUGE_CIRCUMFERENCE = 427; // 2 * PI * 68
 
     /* ==========================================================================
@@ -127,13 +130,22 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ==========================================================================
        3. Input Synchronizations & Micro-Interactions
        ========================================================================== */
+    function triggerBounce(element) {
+        element.style.transform = 'scale(1.15)';
+        setTimeout(() => {
+            element.style.transform = 'scale(1)';
+        }, 150);
+    }
+
     ageSlider.addEventListener('input', (e) => {
         ageVal.textContent = e.target.value;
+        triggerBounce(ageVal);
         triggerAutoPredict();
     });
 
     distanceSlider.addEventListener('input', (e) => {
         distanceVal.textContent = `${e.target.value} km`;
+        triggerBounce(distanceVal);
         triggerAutoPredict();
     });
 
@@ -144,16 +156,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     managerSlider.addEventListener('input', (e) => {
         managerTenureVal.textContent = `${e.target.value} yrs`;
+        triggerBounce(managerTenureVal);
         triggerAutoPredict();
     });
 
     totalExpInput.addEventListener('input', (e) => {
         totalExpVal.textContent = `${e.target.value} yrs`;
+        triggerBounce(totalExpVal);
         triggerAutoPredict();
     });
 
     companyTenureInput.addEventListener('input', (e) => {
         companyTenureVal.textContent = `${e.target.value} yrs`;
+        triggerBounce(companyTenureVal);
         triggerAutoPredict();
     });
 
@@ -354,14 +369,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ==========================================================================
-       5. Prediction Engine (API Call + Animation)
+       5. Number Counter Animation
+       ========================================================================== */
+    function animateNumber(element, start, end, duration = 400, suffix = '') {
+        const startTime = performance.now();
+        const diff = end - start;
+
+        function step(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            // Ease out cubic
+            const ease = 1 - Math.pow(1 - progress, 3);
+            const currentVal = Math.round(start + diff * ease);
+            element.textContent = `${currentVal}${suffix}`;
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            } else {
+                element.textContent = `${Math.round(end)}${suffix}`;
+            }
+        }
+        requestAnimationFrame(step);
+    }
+
+    /* ==========================================================================
+       6. Prediction Engine (API Call + Animation)
        ========================================================================== */
     function triggerAutoPredict() {
         if (!livePredictToggle.checked) return;
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
             executePrediction();
-        }, 220);
+        }, 200);
     }
 
     form.addEventListener('submit', (e) => {
@@ -373,6 +411,9 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.disabled = true;
         submitSpinner.classList.remove('hidden');
         submitBtnText.textContent = 'Calculating...';
+
+        // Add calculating radar scan-beam effect to the result dashboard
+        if (resultCard) resultCard.classList.add('is-calculating');
 
         const formData = new FormData(form);
         const payload = {};
@@ -405,19 +446,25 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = false;
             submitSpinner.classList.add('hidden');
             submitBtnText.textContent = 'Run Prediction Model';
+            if (resultCard) {
+                setTimeout(() => resultCard.classList.remove('is-calculating'), 300);
+            }
         }
     }
 
     /* ==========================================================================
-       6. Live Dashboard Update
+       7. Live Dashboard Update with Motion
        ========================================================================== */
     function updateDashboard(data, inputs) {
         const leavePct = Number(data.leave_probability);
         const stayPct = Number(data.stay_probability);
         const isLeave = data.prediction_code === 1;
 
-        // Circular Radial Gauge
-        gaugePercentage.textContent = `${Math.round(leavePct)}%`;
+        // Smooth Counter Animation on Gauge
+        animateNumber(gaugePercentage, currentLeavePct, leavePct, 450, '%');
+        currentLeavePct = leavePct;
+
+        // Circular Radial Gauge Stroke Offset Animation
         const offset = GAUGE_CIRCUMFERENCE - (leavePct / 100) * GAUGE_CIRCUMFERENCE;
         gaugeCircle.style.strokeDashoffset = offset;
 
@@ -432,20 +479,38 @@ document.addEventListener('DOMContentLoaded', () => {
             badgeClass = 'status-badge danger';
             badgeText = 'High Flight Risk';
             bannerClass = 'verdict-card danger';
+            if (gaugeContainer) {
+                gaugeContainer.classList.add('danger-pulse');
+                gaugeContainer.classList.remove('safe-pulse');
+            }
         } else if (leavePct >= 35) {
             themeColor = '#f59e0b';
             badgeClass = 'status-badge warning';
             badgeText = 'Moderate Watch';
             bannerClass = 'verdict-card warning';
+            if (gaugeContainer) {
+                gaugeContainer.classList.remove('danger-pulse', 'safe-pulse');
+            }
+        } else {
+            if (gaugeContainer) {
+                gaugeContainer.classList.add('safe-pulse');
+                gaugeContainer.classList.remove('danger-pulse');
+            }
         }
 
         gaugeCircle.style.stroke = themeColor;
         riskBadge.className = badgeClass;
         riskBadge.textContent = badgeText;
 
-        // Outcome Verdict Banner
+        // Outcome Verdict Banner with Bouncing Icon
         verdictBanner.className = bannerClass;
         verdictIcon.textContent = isLeave ? '🚨' : (leavePct >= 35 ? '⚠️' : '🛡️');
+        
+        // Trigger icon bounce animation
+        verdictIcon.classList.remove('icon-bounce');
+        void verdictIcon.offsetWidth; // Force DOM reflow
+        verdictIcon.classList.add('icon-bounce');
+
         verdictHeading.textContent = isLeave ? 'Likely to Leave (Attrition: Yes)' : 'Likely to Stay (Attrition: No)';
         verdictDetails.textContent = isLeave
             ? 'Logistic Regression predicts this employee is at high risk of attrition based on workload and engagement factors.'
@@ -462,7 +527,7 @@ document.addEventListener('DOMContentLoaded', () => {
         riskSeverityLabel.textContent = data.risk_level;
         riskSeverityLabel.style.color = themeColor;
 
-        // Render Dynamic Key Signal Insights Tags
+        // Render Dynamic Key Signal Insights Tags with Staggered Pop-In
         renderInsightTags(inputs, leavePct);
     }
 
@@ -527,11 +592,12 @@ document.addEventListener('DOMContentLoaded', () => {
             tags.push({ text: '✈️ High Travel Strain', type: 'warning' });
         }
 
-        // Append to DOM
-        tags.forEach(t => {
+        // Append to DOM with Staggered Delay
+        tags.forEach((t, idx) => {
             const span = document.createElement('span');
             span.className = `factor-tag tag-${t.type}`;
             span.textContent = t.text;
+            span.style.animationDelay = `${idx * 40}ms`;
             factorTags.appendChild(span);
         });
     }
