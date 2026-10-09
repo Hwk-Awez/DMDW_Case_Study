@@ -1,93 +1,197 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HR Employee Attrition Predictor | DMDW Case Study</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>HR Attrition Intelligence | DMDW Case Study</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <div class="app-layout">
-        <!-- Header -->
-        <header class="app-header">
-            <div class="header-container">
-                <div class="branding">
-                    <div class="logo-badge">ML</div>
-                    <div>
-                        <h1>HR Employee Attrition Predictor</h1>
-                        <p class="subtitle">Data Mining & Data Warehousing (DMDW) Case Study</p>
+    <!-- Ambient Background Glows -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <div class="app-wrapper">
+        <!-- Navigation Bar -->
+        <header class="navbar">
+            <div class="nav-container">
+                <div class="brand">
+                    <div class="brand-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <div class="brand-text">
+                        <div class="brand-title-row">
+                            <span class="brand-title">AttritionIQ</span>
+                            <span class="badge-tag">DMDW Case Study</span>
+                        </div>
+                        <span class="brand-subtitle">HR Employee Retention & Attrition Predictor</span>
                     </div>
                 </div>
-                <div class="model-badge">
-                    <span class="status-dot"></span>
-                    <span>Model: Logistic Regression · Standard Scaled</span>
+
+                <div class="nav-actions">
+                    <!-- Model Status Pill -->
+                    <div class="model-pill">
+                        <span class="pulse-indicator"></span>
+                        <span class="model-name">Logistic Regression</span>
+                        <span class="model-spec">(24 Encoded Features)</span>
+                    </div>
+
+                    <!-- Comparison Modal Trigger -->
+                    <button type="button" class="btn btn-ghost" id="openBenchmarkBtn" title="View Model Benchmark Study">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                        <span>Benchmark Stats</span>
+                    </button>
+
+                    <!-- Theme Toggle -->
+                    <button type="button" class="btn-icon theme-toggle" id="themeToggle" aria-label="Toggle Theme" title="Toggle Light / Dark Theme">
+                        <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </header>
 
-        <!-- Main Content Grid -->
-        <main class="main-container">
-            <!-- Left Column: Input Form -->
-            <section class="form-section">
-                <div class="card form-card">
-                    <div class="card-header">
-                        <div>
-                            <h2>Employee Features</h2>
-                            <p class="section-desc">Provide employee metrics to evaluate attrition probability.</p>
-                        </div>
-                        <div class="preset-buttons">
-                            <button type="button" class="btn btn-sm btn-outline" id="loadHighRiskBtn" title="Load sample likely to leave">
-                                ⚠️ Sample (High Risk)
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline" id="loadLowRiskBtn" title="Load sample likely to stay">
-                                ✅ Sample (Low Risk)
-                            </button>
-                        </div>
+        <!-- Main Dashboard -->
+        <main class="dashboard-container">
+            <!-- Left Workspace: Input Controls -->
+            <div class="workspace-panel">
+                <!-- Quick Preset Bar -->
+                <div class="preset-strip">
+                    <span class="preset-label">Quick Personas:</span>
+                    <div class="preset-chips">
+                        <button type="button" class="chip chip-danger" id="presetHighRisk">
+                            <span>🔥 Burnout Flight-Risk</span>
+                        </button>
+                        <button type="button" class="chip chip-success" id="presetLowRisk">
+                            <span>🛡️ Loyal Retained Senior</span>
+                        </button>
+                        <button type="button" class="chip chip-neutral" id="presetAverage">
+                            <span>⚖️ Balanced Mid-Level</span>
+                        </button>
                     </div>
+                </div>
 
-                    <form id="predictionForm" method="POST" action="{% url 'predict' %}">
-                        {% csrf_token %}
+                <!-- Input Form -->
+                <form id="predictionForm" method="POST" action="{% url 'predict' %}" autocomplete="off">
+                    {% csrf_token %}
 
-                        <!-- Group 1: Personal & Demographics -->
-                        <div class="form-group-block">
-                            <h3 class="group-title">
-                                <span class="group-icon">👤</span> Personal & Commute
-                            </h3>
-                            <div class="input-grid">
-                                <div class="form-field">
-                                    <label for="Age">Age <span class="req">*</span></label>
-                                    <input type="number" id="Age" name="Age" min="18" max="70" value="32" required>
-                                    <span class="field-hint">Range: 18 – 70</span>
-                                </div>
-                                <div class="form-field">
-                                    <label for="DistanceFromHome">Distance From Home (km) <span class="req">*</span></label>
-                                    <input type="number" id="DistanceFromHome" name="DistanceFromHome" min="1" max="60" value="7" required>
-                                    <span class="field-hint">Distance from office</span>
-                                </div>
-                                <div class="form-field">
-                                    <label for="MaritalStatus">Marital Status <span class="req">*</span></label>
-                                    <select id="MaritalStatus" name="MaritalStatus" required>
-                                        <option value="Single" selected>Single</option>
-                                        <option value="Married">Married</option>
-                                        <option value="Divorced">Divorced</option>
-                                    </select>
-                                </div>
+                    <!-- Card 1: Core Profile & Demographics -->
+                    <div class="glass-card">
+                        <div class="card-title-row">
+                            <div class="card-icon blue">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3>Demographics & Commute</h3>
+                                <p class="card-desc">Personal background and office distance factors</p>
                             </div>
                         </div>
 
-                        <!-- Group 2: Role & Work Style -->
-                        <div class="form-group-block">
-                            <h3 class="group-title">
-                                <span class="group-icon">💼</span> Role & Work Dynamics
-                            </h3>
-                            <div class="input-grid">
-                                <div class="form-field span-2">
-                                    <label for="JobRole">Job Role <span class="req">*</span></label>
-                                    <select id="JobRole" name="JobRole" required>
+                        <div class="controls-grid">
+                            <!-- Age -->
+                            <div class="control-box">
+                                <div class="control-header">
+                                    <label for="Age">Age</label>
+                                    <span class="value-bubble" id="ageVal">32</span>
+                                </div>
+                                <div class="range-slider-wrap">
+                                    <input type="range" id="Age" name="Age" min="18" max="65" value="32" class="modern-slider">
+                                    <div class="range-ticks">
+                                        <span>18</span>
+                                        <span>35</span>
+                                        <span>50</span>
+                                        <span>65</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Distance From Home -->
+                            <div class="control-box">
+                                <div class="control-header">
+                                    <label for="DistanceFromHome">Distance From Office</label>
+                                    <span class="value-bubble" id="distanceVal">8 km</span>
+                                </div>
+                                <div class="range-slider-wrap">
+                                    <input type="range" id="DistanceFromHome" name="DistanceFromHome" min="1" max="45" value="8" class="modern-slider">
+                                    <div class="range-ticks">
+                                        <span>1 km</span>
+                                        <span>15 km</span>
+                                        <span>30 km</span>
+                                        <span>45 km</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Marital Status -->
+                            <div class="control-box full-width">
+                                <label class="field-label">Marital Status</label>
+                                <div class="segmented-pill-group" id="maritalGroup">
+                                    <label class="segmented-pill">
+                                        <input type="radio" name="MaritalStatus" value="Single" checked>
+                                        <span>Single</span>
+                                    </label>
+                                    <label class="segmented-pill">
+                                        <input type="radio" name="MaritalStatus" value="Married">
+                                        <span>Married</span>
+                                    </label>
+                                    <label class="segmented-pill">
+                                        <input type="radio" name="MaritalStatus" value="Divorced">
+                                        <span>Divorced</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Workplace Role & Schedule -->
+                    <div class="glass-card">
+                        <div class="card-title-row">
+                            <div class="card-icon purple">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3>Role & Work Schedule</h3>
+                                <p class="card-desc">Job responsibilities, hierarchy tier, and business demands</p>
+                            </div>
+                        </div>
+
+                        <div class="controls-grid">
+                            <!-- Job Role -->
+                            <div class="control-box full-width">
+                                <label for="JobRole" class="field-label">Job Role</label>
+                                <div class="custom-select-wrapper">
+                                    <select id="JobRole" name="JobRole" class="modern-select">
                                         <option value="Sales Executive" selected>Sales Executive</option>
                                         <option value="Research Scientist">Research Scientist</option>
                                         <option value="Laboratory Technician">Laboratory Technician</option>
@@ -99,222 +203,434 @@
                                         <option value="Human Resources">Human Resources</option>
                                     </select>
                                 </div>
-                                <div class="form-field">
-                                    <label for="JobLevel">Job Level (1 - 5) <span class="req">*</span></label>
-                                    <select id="JobLevel" name="JobLevel" required>
-                                        <option value="1">1 - Entry Level</option>
-                                        <option value="2" selected>2 - Junior / Mid</option>
-                                        <option value="3">3 - Senior</option>
-                                        <option value="4">4 - Lead / Manager</option>
-                                        <option value="5">5 - Director / Executive</option>
-                                    </select>
+                            </div>
+
+                            <!-- Job Level -->
+                            <div class="control-box full-width">
+                                <div class="control-header">
+                                    <label class="field-label">Job Level Tier</label>
+                                    <span class="value-subtitle" id="jobLevelDesc">Level 2: Mid-Level Specialist</span>
                                 </div>
-                                <div class="form-field">
-                                    <label for="BusinessTravel">Business Travel <span class="req">*</span></label>
-                                    <select id="BusinessTravel" name="BusinessTravel" required>
-                                        <option value="Travel_Rarely" selected>Travel Rarely</option>
-                                        <option value="Travel_Frequently">Travel Frequently</option>
-                                        <option value="Non-Travel">Non-Travel</option>
-                                    </select>
+                                <div class="segmented-pill-group five-grid" id="jobLevelGroup">
+                                    <label class="segmented-pill">
+                                        <input type="radio" name="JobLevel" value="1">
+                                        <span>L1 Entry</span>
+                                    </label>
+                                    <label class="segmented-pill">
+                                        <input type="radio" name="JobLevel" value="2" checked>
+                                        <span>L2 Mid</span>
+                                    </label>
+                                    <label class="segmented-pill">
+                                        <input type="radio" name="JobLevel" value="3">
+                                        <span>L3 Senior</span>
+                                    </label>
+                                    <label class="segmented-pill">
+                                        <input type="radio" name="JobLevel" value="4">
+                                        <span>L4 Lead</span>
+                                    </label>
+                                    <label class="segmented-pill">
+                                        <input type="radio" name="JobLevel" value="5">
+                                        <span>L5 Exec</span>
+                                    </label>
                                 </div>
-                                <div class="form-field">
-                                    <label for="OverTime">OverTime <span class="req">*</span></label>
-                                    <select id="OverTime" name="OverTime" required>
-                                        <option value="No" selected>No</option>
-                                        <option value="Yes">Yes</option>
-                                    </select>
+                            </div>
+
+                            <!-- Business Travel -->
+                            <div class="control-box">
+                                <label class="field-label">Business Travel Frequency</label>
+                                <div class="segmented-pill-group vertical-pill" id="travelGroup">
+                                    <label class="segmented-pill">
+                                        <input type="radio" name="BusinessTravel" value="Travel_Rarely" checked>
+                                        <span>✈️ Travel Rarely</span>
+                                    </label>
+                                    <label class="segmented-pill">
+                                        <input type="radio" name="BusinessTravel" value="Travel_Frequently">
+                                        <span>🚀 Travel Frequently</span>
+                                    </label>
+                                    <label class="segmented-pill">
+                                        <input type="radio" name="BusinessTravel" value="Non-Travel">
+                                        <span>🏢 Non-Travel</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- OverTime Switch -->
+                            <div class="control-box overtime-box">
+                                <div class="overtime-header">
+                                    <div>
+                                        <label class="field-label">Mandatory OverTime</label>
+                                        <p class="field-hint">Frequent extra work hours past shift</p>
+                                    </div>
+                                    <label class="modern-switch">
+                                        <input type="checkbox" id="overTimeToggle">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <input type="hidden" id="OverTime" name="OverTime" value="No">
+                                <div class="overtime-status-pill safe" id="overTimePill">
+                                    <span class="ot-dot"></span>
+                                    <span class="ot-text">OverTime: No (Standard Workload)</span>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Group 3: Compensation & Stock -->
-                        <div class="form-group-block">
-                            <h3 class="group-title">
-                                <span class="group-icon">💰</span> Compensation & Benefits
-                            </h3>
-                            <div class="input-grid">
-                                <div class="form-field">
-                                    <label for="MonthlyIncome">Monthly Income ($) <span class="req">*</span></label>
-                                    <input type="number" id="MonthlyIncome" name="MonthlyIncome" min="1000" max="30000" step="100" value="5100" required>
-                                    <span class="field-hint">Monthly base salary</span>
-                                </div>
-                                <div class="form-field">
-                                    <label for="StockOptionLevel">Stock Option Level (0 - 3) <span class="req">*</span></label>
-                                    <select id="StockOptionLevel" name="StockOptionLevel" required>
-                                        <option value="0" selected>0 - No Stock Options</option>
-                                        <option value="1">1 - Level 1</option>
-                                        <option value="2">2 - Level 2</option>
-                                        <option value="3">3 - Level 3</option>
-                                    </select>
-                                </div>
+                    <!-- Card 3: Compensation & Tenure -->
+                    <div class="glass-card">
+                        <div class="card-title-row">
+                            <div class="card-icon emerald">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3>Compensation & Tenure</h3>
+                                <p class="card-desc">Remuneration, stock grants, and company longevity</p>
                             </div>
                         </div>
 
-                        <!-- Group 4: Tenure & Experience -->
-                        <div class="form-group-block">
-                            <h3 class="group-title">
-                                <span class="group-icon">⏳</span> Tenure & Career Experience
-                            </h3>
-                            <div class="input-grid">
-                                <div class="form-field">
-                                    <label for="TotalWorkingYears">Total Working Years <span class="req">*</span></label>
-                                    <input type="number" id="TotalWorkingYears" name="TotalWorkingYears" min="0" max="45" value="7" required>
-                                    <span class="field-hint">Entire career experience</span>
+                        <div class="controls-grid">
+                            <!-- Monthly Income -->
+                            <div class="control-box full-width">
+                                <div class="control-header">
+                                    <label for="MonthlyIncome">Monthly Salary</label>
+                                    <span class="salary-highlight" id="incomeDisplay">$5,100 / mo</span>
                                 </div>
-                                <div class="form-field">
-                                    <label for="YearsAtCompany">Years at Company <span class="req">*</span></label>
-                                    <input type="number" id="YearsAtCompany" name="YearsAtCompany" min="0" max="40" value="4" required>
-                                    <span class="field-hint">Tenure at this firm</span>
+                                <div class="range-slider-wrap">
+                                    <input type="range" id="MonthlyIncome" name="MonthlyIncome" min="1000" max="22000" step="100" value="5100" class="modern-slider accent-emerald">
+                                    <div class="range-ticks">
+                                        <span>$1k</span>
+                                        <span>$5k</span>
+                                        <span>$10k</span>
+                                        <span>$15k</span>
+                                        <span>$20k+</span>
+                                    </div>
                                 </div>
-                                <div class="form-field">
-                                    <label for="YearsWithCurrManager">Years with Current Manager <span class="req">*</span></label>
-                                    <input type="number" id="YearsWithCurrManager" name="YearsWithCurrManager" min="0" max="30" value="3" required>
-                                    <span class="field-hint">Time with manager</span>
+                            </div>
+
+                            <!-- Stock Option Level -->
+                            <div class="control-box full-width">
+                                <label class="field-label">Stock Option Level (Equity Incentive)</label>
+                                <div class="segmented-pill-group four-grid" id="stockGroup">
+                                    <label class="segmented-pill">
+                                        <input type="radio" name="StockOptionLevel" value="0" checked>
+                                        <span>Tier 0 (None)</span>
+                                    </label>
+                                    <label class="segmented-pill">
+                                        <input type="radio" name="StockOptionLevel" value="1">
+                                        <span>Tier 1 (Base)</span>
+                                    </label>
+                                    <label class="segmented-pill">
+                                        <input type="radio" name="StockOptionLevel" value="2">
+                                        <span>Tier 2 (Senior)</span>
+                                    </label>
+                                    <label class="segmented-pill">
+                                        <input type="radio" name="StockOptionLevel" value="3">
+                                        <span>Tier 3 (Exec)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Total Working Years -->
+                            <div class="control-box">
+                                <div class="control-header">
+                                    <label for="TotalWorkingYears">Total Career Experience</label>
+                                    <span class="value-bubble" id="totalExpVal">8 yrs</span>
+                                </div>
+                                <div class="stepper-input-row">
+                                    <button type="button" class="stepper-btn" data-target="TotalWorkingYears" data-step="-1">−</button>
+                                    <input type="number" id="TotalWorkingYears" name="TotalWorkingYears" min="0" max="40" value="8" class="stepper-input">
+                                    <button type="button" class="stepper-btn" data-target="TotalWorkingYears" data-step="1">+</button>
+                                </div>
+                            </div>
+
+                            <!-- Years at Company -->
+                            <div class="control-box">
+                                <div class="control-header">
+                                    <label for="YearsAtCompany">Tenure at Company</label>
+                                    <span class="value-bubble" id="companyTenureVal">4 yrs</span>
+                                </div>
+                                <div class="stepper-input-row">
+                                    <button type="button" class="stepper-btn" data-target="YearsAtCompany" data-step="-1">−</button>
+                                    <input type="number" id="YearsAtCompany" name="YearsAtCompany" min="0" max="40" value="4" class="stepper-input">
+                                    <button type="button" class="stepper-btn" data-target="YearsAtCompany" data-step="1">+</button>
+                                </div>
+                            </div>
+
+                            <!-- Years with Current Manager -->
+                            <div class="control-box full-width">
+                                <div class="control-header">
+                                    <label for="YearsWithCurrManager">Years with Current Manager</label>
+                                    <span class="value-bubble" id="managerTenureVal">3 yrs</span>
+                                </div>
+                                <div class="range-slider-wrap">
+                                    <input type="range" id="YearsWithCurrManager" name="YearsWithCurrManager" min="0" max="25" value="3" class="modern-slider">
+                                    <div class="range-ticks">
+                                        <span>0 yrs</span>
+                                        <span>5 yrs</span>
+                                        <span>10 yrs</span>
+                                        <span>15 yrs</span>
+                                        <span>20+ yrs</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Group 5: Workplace Satisfaction (1 - 4 Scale) -->
-                        <div class="form-group-block">
-                            <h3 class="group-title">
-                                <span class="group-icon">⭐</span> Satisfaction & Engagement (Scale 1–4)
-                            </h3>
-                            <div class="input-grid">
-                                <div class="form-field">
-                                    <label for="JobSatisfaction">Job Satisfaction <span class="req">*</span></label>
-                                    <select id="JobSatisfaction" name="JobSatisfaction" required>
-                                        <option value="1">1 - Low</option>
-                                        <option value="2">2 - Medium</option>
-                                        <option value="3" selected>3 - High</option>
-                                        <option value="4">4 - Very High</option>
-                                    </select>
-                                </div>
-                                <div class="form-field">
-                                    <label for="EnvironmentSatisfaction">Environment Satisfaction <span class="req">*</span></label>
-                                    <select id="EnvironmentSatisfaction" name="EnvironmentSatisfaction" required>
-                                        <option value="1">1 - Low</option>
-                                        <option value="2">2 - Medium</option>
-                                        <option value="3" selected>3 - High</option>
-                                        <option value="4">4 - Very High</option>
-                                    </select>
-                                </div>
-                                <div class="form-field">
-                                    <label for="JobInvolvement">Job Involvement <span class="req">*</span></label>
-                                    <select id="JobInvolvement" name="JobInvolvement" required>
-                                        <option value="1">1 - Low</option>
-                                        <option value="2">2 - Medium</option>
-                                        <option value="3" selected>3 - High</option>
-                                        <option value="4">4 - Very High</option>
-                                    </select>
-                                </div>
+                    <!-- Card 4: Workplace Engagement & Sentiment -->
+                    <div class="glass-card">
+                        <div class="card-title-row">
+                            <div class="card-icon amber">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3>Satisfaction & Workplace Sentiment</h3>
+                                <p class="card-desc">Subjective employee engagement indicators (Standard 1–4 Scale)</p>
                             </div>
                         </div>
 
-                        <!-- Action Buttons -->
-                        <div class="form-actions">
-                            <button type="submit" id="submitBtn" class="btn btn-primary btn-lg">
-                                <span class="btn-text">🔍 Predict Attrition</span>
-                                <span class="btn-spinner hidden"></span>
+                        <div class="sentiment-stack">
+                            <!-- Job Satisfaction -->
+                            <div class="sentiment-item">
+                                <div class="sentiment-meta">
+                                    <span class="sentiment-title">Job Satisfaction</span>
+                                    <span class="sentiment-feedback" id="jobSatDesc">High (3/4)</span>
+                                </div>
+                                <div class="rating-pills" data-field="JobSatisfaction">
+                                    <button type="button" class="rate-btn" data-val="1"><span>😞</span> 1 Low</button>
+                                    <button type="button" class="rate-btn" data-val="2"><span>😐</span> 2 Medium</button>
+                                    <button type="button" class="rate-btn active" data-val="3"><span>😊</span> 3 High</button>
+                                    <button type="button" class="rate-btn" data-val="4"><span>🤩</span> 4 Very High</button>
+                                </div>
+                                <input type="hidden" id="JobSatisfaction" name="JobSatisfaction" value="3">
+                            </div>
+
+                            <!-- Environment Satisfaction -->
+                            <div class="sentiment-item">
+                                <div class="sentiment-meta">
+                                    <span class="sentiment-title">Work Environment Satisfaction</span>
+                                    <span class="sentiment-feedback" id="envSatDesc">High (3/4)</span>
+                                </div>
+                                <div class="rating-pills" data-field="EnvironmentSatisfaction">
+                                    <button type="button" class="rate-btn" data-val="1"><span>😞</span> 1 Low</button>
+                                    <button type="button" class="rate-btn" data-val="2"><span>😐</span> 2 Medium</button>
+                                    <button type="button" class="rate-btn active" data-val="3"><span>😊</span> 3 High</button>
+                                    <button type="button" class="rate-btn" data-val="4"><span>🤩</span> 4 Very High</button>
+                                </div>
+                                <input type="hidden" id="EnvironmentSatisfaction" name="EnvironmentSatisfaction" value="3">
+                            </div>
+
+                            <!-- Job Involvement -->
+                            <div class="sentiment-item">
+                                <div class="sentiment-meta">
+                                    <span class="sentiment-title">Job Involvement & Ownership</span>
+                                    <span class="sentiment-feedback" id="involveDesc">High (3/4)</span>
+                                </div>
+                                <div class="rating-pills" data-field="JobInvolvement">
+                                    <button type="button" class="rate-btn" data-val="1"><span>😞</span> 1 Low</button>
+                                    <button type="button" class="rate-btn" data-val="2"><span>😐</span> 2 Medium</button>
+                                    <button type="button" class="rate-btn active" data-val="3"><span>😊</span> 3 High</button>
+                                    <button type="button" class="rate-btn" data-val="4"><span>🤩</span> 4 Very High</button>
+                                </div>
+                                <input type="hidden" id="JobInvolvement" name="JobInvolvement" value="3">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Floating Action Bar -->
+                    <div class="action-dock">
+                        <div class="live-toggle-wrapper">
+                            <label class="modern-switch small">
+                                <input type="checkbox" id="livePredictToggle" checked>
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="live-label">⚡ Live Auto-Inference</span>
+                        </div>
+
+                        <div class="button-cluster">
+                            <button type="button" id="resetBtn" class="btn btn-outline">
+                                <span>Reset Values</span>
                             </button>
-                            <button type="button" id="resetBtn" class="btn btn-secondary">
-                                Reset Form
+                            <button type="submit" id="submitBtn" class="btn btn-primary pulse-btn">
+                                <span class="btn-icon-spin hidden" id="submitSpinner"></span>
+                                <span class="btn-text" id="submitBtnText">Run Prediction Model</span>
                             </button>
                         </div>
-                    </form>
-                </div>
-            </section>
+                    </div>
+                </form>
+            </div>
 
-            <!-- Right Column: Results & Insights -->
-            <section class="results-section">
-                <!-- Result Display Card -->
-                <div class="card result-card" id="resultCard">
-                    <div class="card-header">
-                        <h2>Prediction Output</h2>
-                        <span class="badge badge-neutral" id="statusBadge">Awaiting Input</span>
+            <!-- Right Workspace: Prediction Dashboard (Sticky) -->
+            <aside class="results-panel">
+                <div class="glass-card result-dashboard" id="resultCard">
+                    <!-- Dashboard Header -->
+                    <div class="result-header">
+                        <div class="result-header-text">
+                            <h2>Inference Outcome</h2>
+                            <p class="panel-sub">Logistic Regression probability assessment</p>
+                        </div>
+                        <span class="status-badge" id="riskBadge">Calculating...</span>
                     </div>
 
-                    <!-- Placeholder State -->
-                    <div class="placeholder-state" id="placeholderState">
-                        <div class="placeholder-icon">📊</div>
-                        <h3>No Prediction Yet</h3>
-                        <p>Fill out the 15 employee features on the left and click <strong>Predict Attrition</strong> to run the model.</p>
-                    </div>
-
-                    <!-- Output State (Hidden by default) -->
-                    <div class="output-content hidden" id="outputContent">
-                        <!-- Main verdict banner -->
-                        <div class="verdict-banner" id="verdictBanner">
-                            <div class="verdict-icon" id="verdictIcon">⚡</div>
-                            <div class="verdict-text">
-                                <span class="verdict-subtitle">Predicted Outcome</span>
-                                <h3 class="verdict-title" id="verdictTitle">Likely to Stay</h3>
-                                <p class="verdict-desc" id="verdictDesc">Employee is likely to stay with the company.</p>
-                            </div>
-                        </div>
-
-                        <!-- Probability Gauge / Bars -->
-                        <div class="metric-section">
-                            <h4>Probability Breakdown</h4>
-                            
-                            <div class="prob-bar-container">
-                                <div class="prob-label-row">
-                                    <span class="prob-name">Leave Probability (Yes)</span>
-                                    <span class="prob-val" id="leaveProbText">0%</span>
-                                </div>
-                                <div class="progress-track">
-                                    <div class="progress-fill fill-danger" id="leaveProbBar" style="width: 0%;"></div>
-                                </div>
-                            </div>
-
-                            <div class="prob-bar-container">
-                                <div class="prob-label-row">
-                                    <span class="prob-name">Stay Probability (No)</span>
-                                    <span class="prob-val" id="stayProbText">100%</span>
-                                </div>
-                                <div class="progress-track">
-                                    <div class="progress-fill fill-success" id="stayProbBar" style="width: 100%;"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Metric Details Grid -->
-                        <div class="metrics-grid">
-                            <div class="metric-box">
-                                <span class="metric-label">Model Class</span>
-                                <span class="metric-val" id="modelClassCode">No (0)</span>
-                            </div>
-                            <div class="metric-box">
-                                <span class="metric-label">Risk Category</span>
-                                <span class="metric-val" id="riskCategoryText">Low Risk</span>
-                            </div>
-                            <div class="metric-box">
-                                <span class="metric-label">Algorithm</span>
-                                <span class="metric-val" id="algorithmText">Logistic Regression</span>
+                    <!-- Circular Probability Gauge -->
+                    <div class="gauge-centerpiece">
+                        <div class="radial-gauge-container">
+                            <svg class="radial-gauge" viewBox="0 0 160 160">
+                                <circle class="gauge-bg" cx="80" cy="80" r="68"></circle>
+                                <circle class="gauge-progress" id="gaugeCircle" cx="80" cy="80" r="68"></circle>
+                            </svg>
+                            <div class="gauge-inner">
+                                <span class="gauge-percentage" id="gaugePercentage">--%</span>
+                                <span class="gauge-sublabel">Attrition Risk</span>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Outcome Verdict Banner -->
+                    <div class="verdict-card" id="verdictBanner">
+                        <div class="verdict-icon-bubble" id="verdictIcon">⚡</div>
+                        <div class="verdict-content">
+                            <span class="verdict-kicker">Predicted Classification</span>
+                            <h3 class="verdict-heading" id="verdictHeading">Analyzing Profile...</h3>
+                            <p class="verdict-details" id="verdictDetails">The model is processing the 15 input features.</p>
+                        </div>
+                    </div>
+
+                    <!-- Probability Duel Bar -->
+                    <div class="duel-bar-wrap">
+                        <div class="duel-labels">
+                            <div class="duel-col left">
+                                <span class="dot-ind red"></span>
+                                <span>Leave Risk: <strong id="leavePctLabel">0%</strong></span>
+                            </div>
+                            <div class="duel-col right">
+                                <span class="dot-ind green"></span>
+                                <span>Retention Chance: <strong id="stayPctLabel">0%</strong></span>
+                            </div>
+                        </div>
+                        <div class="dual-progress-track">
+                            <div class="dual-fill-danger" id="dualLeaveFill" style="width: 50%;"></div>
+                            <div class="dual-fill-success" id="dualStayFill" style="width: 50%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Metric Chips Grid -->
+                    <div class="metric-grid-chips">
+                        <div class="metric-chip">
+                            <span class="chip-title">Model Target</span>
+                            <span class="chip-metric" id="targetClassCode">--</span>
+                        </div>
+                        <div class="metric-chip">
+                            <span class="chip-title">Risk Severity</span>
+                            <span class="chip-metric" id="riskSeverityLabel">--</span>
+                        </div>
+                        <div class="metric-chip">
+                            <span class="chip-title">Trained Scaler</span>
+                            <span class="chip-metric">StandardScaler</span>
+                        </div>
+                        <div class="metric-chip">
+                            <span class="chip-title">Model Type</span>
+                            <span class="chip-metric">Logistic Reg.</span>
+                        </div>
+                    </div>
+
+                    <!-- Factor Influence Diagnostics -->
+                    <div class="factors-section">
+                        <h4>Key Signal Insights</h4>
+                        <div class="factor-tags" id="factorTags">
+                            <!-- Injected dynamically via JS based on current inputs -->
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Info Card -->
-                <div class="card info-card">
-                    <h3>About the Workflow</h3>
-                    <ul class="workflow-steps">
-                        <li>
-                            <span class="step-num">1</span>
-                            <div><strong>Dataset Balancing</strong>: Original 1470 rows (1233 No / 237 Yes) reduced intelligently to 711 rows (2:1 ratio) using multi-feature bin scoring.</div>
-                        </li>
-                        <li>
-                            <span class="step-num">2</span>
-                            <div><strong>Feature Selection</strong>: 15 key factors selected; categorical variables one-hot encoded (`drop_first=True`) creating 24 model features.</div>
-                        </li>
-                        <li>
-                            <span class="step-num">3</span>
-                            <div><strong>Preprocessing & Scaler</strong>: Continuous features normalized using `StandardScaler`.</div>
-                        </li>
-                    </ul>
+                <!-- Case Study Context Card -->
+                <div class="glass-card mini-info-card">
+                    <div class="info-header">
+                        <div class="info-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                        </div>
+                        <h4>DMDW Methodology Notes</h4>
+                    </div>
+                    <p class="info-body">
+                        Class imbalance was corrected from <strong>5.2:1</strong> down to <strong>2:1</strong> via 8-feature bin scoring. Logistic Regression was validated as the highest performing model (77.6% Acc, 0.590 F1).
+                    </p>
                 </div>
-            </section>
+            </aside>
         </main>
+    </div>
+
+    <!-- Benchmark Statistics Modal -->
+    <div class="modal-backdrop hidden" id="benchmarkModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <span class="modal-kicker">Experimental Results</span>
+                    <h3>DMDW Model Evaluation Comparison</h3>
+                </div>
+                <button type="button" class="btn-close" id="closeBenchmarkBtn">✕</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">
+                    Performance comparison across the 3 models tested on the balanced 711-row HR Employee dataset (80% train / 20% test split):
+                </p>
+                <div class="table-responsive">
+                    <table class="benchmark-table">
+                        <thead>
+                            <tr>
+                                <th>Model Algorithm</th>
+                                <th>Hyperparameters</th>
+                                <th>Accuracy</th>
+                                <th>Precision</th>
+                                <th>Recall</th>
+                                <th>F1 Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="highlight-row">
+                                <td>
+                                    <div class="model-row-name">
+                                        <span class="star-active">★</span>
+                                        <strong>Logistic Regression</strong>
+                                        <span class="best-badge">Selected Best</span>
+                                    </div>
+                                </td>
+                                <td>Scaled Features, C=1.0</td>
+                                <td><span class="metric-score highlight">77.6%</span></td>
+                                <td><span class="metric-score">60.5%</span></td>
+                                <td><span class="metric-score highlight">57.5%</span></td>
+                                <td><span class="metric-score highlight">0.590</span></td>
+                            </tr>
+                            <tr>
+                                <td>KNN Classifier</td>
+                                <td>K = 20 (5-fold CV)</td>
+                                <td><span class="metric-score">76.2%</span></td>
+                                <td><span class="metric-score">71.4%</span></td>
+                                <td><span class="metric-score">25.0%</span></td>
+                                <td><span class="metric-score">0.370</span></td>
+                            </tr>
+                            <tr>
+                                <td>Decision Tree</td>
+                                <td>max_depth = 2 (5-fold CV)</td>
+                                <td><span class="metric-score">74.1%</span></td>
+                                <td><span class="metric-score">57.1%</span></td>
+                                <td><span class="metric-score">30.0%</span></td>
+                                <td><span class="metric-score">0.393</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-takeaway">
+                    <strong>Key Conclusion:</strong> Logistic Regression showed superior generalization on minority class identification (highest recall of 57.5% vs KNN's 25.0%), making it the most reliable choice for identifying at-risk employees before they leave.
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->
