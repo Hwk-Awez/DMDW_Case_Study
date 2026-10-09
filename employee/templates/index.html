@@ -1,0 +1,323 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Employee Attrition Predictor | DMDW Case Study</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-container">
+                <div class="branding">
+                    <div class="logo-badge">ML</div>
+                    <div>
+                        <h1>HR Employee Attrition Predictor</h1>
+                        <p class="subtitle">Data Mining & Data Warehousing (DMDW) Case Study</p>
+                    </div>
+                </div>
+                <div class="model-badge">
+                    <span class="status-dot"></span>
+                    <span>Model: Logistic Regression · Standard Scaled</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="main-container">
+            <!-- Left Column: Input Form -->
+            <section class="form-section">
+                <div class="card form-card">
+                    <div class="card-header">
+                        <div>
+                            <h2>Employee Features</h2>
+                            <p class="section-desc">Provide employee metrics to evaluate attrition probability.</p>
+                        </div>
+                        <div class="preset-buttons">
+                            <button type="button" class="btn btn-sm btn-outline" id="loadHighRiskBtn" title="Load sample likely to leave">
+                                ⚠️ Sample (High Risk)
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline" id="loadLowRiskBtn" title="Load sample likely to stay">
+                                ✅ Sample (Low Risk)
+                            </button>
+                        </div>
+                    </div>
+
+                    <form id="predictionForm" method="POST" action="{% url 'predict' %}">
+                        {% csrf_token %}
+
+                        <!-- Group 1: Personal & Demographics -->
+                        <div class="form-group-block">
+                            <h3 class="group-title">
+                                <span class="group-icon">👤</span> Personal & Commute
+                            </h3>
+                            <div class="input-grid">
+                                <div class="form-field">
+                                    <label for="Age">Age <span class="req">*</span></label>
+                                    <input type="number" id="Age" name="Age" min="18" max="70" value="32" required>
+                                    <span class="field-hint">Range: 18 – 70</span>
+                                </div>
+                                <div class="form-field">
+                                    <label for="DistanceFromHome">Distance From Home (km) <span class="req">*</span></label>
+                                    <input type="number" id="DistanceFromHome" name="DistanceFromHome" min="1" max="60" value="7" required>
+                                    <span class="field-hint">Distance from office</span>
+                                </div>
+                                <div class="form-field">
+                                    <label for="MaritalStatus">Marital Status <span class="req">*</span></label>
+                                    <select id="MaritalStatus" name="MaritalStatus" required>
+                                        <option value="Single" selected>Single</option>
+                                        <option value="Married">Married</option>
+                                        <option value="Divorced">Divorced</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Group 2: Role & Work Style -->
+                        <div class="form-group-block">
+                            <h3 class="group-title">
+                                <span class="group-icon">💼</span> Role & Work Dynamics
+                            </h3>
+                            <div class="input-grid">
+                                <div class="form-field span-2">
+                                    <label for="JobRole">Job Role <span class="req">*</span></label>
+                                    <select id="JobRole" name="JobRole" required>
+                                        <option value="Sales Executive" selected>Sales Executive</option>
+                                        <option value="Research Scientist">Research Scientist</option>
+                                        <option value="Laboratory Technician">Laboratory Technician</option>
+                                        <option value="Manufacturing Director">Manufacturing Director</option>
+                                        <option value="Healthcare Representative">Healthcare Representative</option>
+                                        <option value="Manager">Manager</option>
+                                        <option value="Sales Representative">Sales Representative</option>
+                                        <option value="Research Director">Research Director</option>
+                                        <option value="Human Resources">Human Resources</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label for="JobLevel">Job Level (1 - 5) <span class="req">*</span></label>
+                                    <select id="JobLevel" name="JobLevel" required>
+                                        <option value="1">1 - Entry Level</option>
+                                        <option value="2" selected>2 - Junior / Mid</option>
+                                        <option value="3">3 - Senior</option>
+                                        <option value="4">4 - Lead / Manager</option>
+                                        <option value="5">5 - Director / Executive</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label for="BusinessTravel">Business Travel <span class="req">*</span></label>
+                                    <select id="BusinessTravel" name="BusinessTravel" required>
+                                        <option value="Travel_Rarely" selected>Travel Rarely</option>
+                                        <option value="Travel_Frequently">Travel Frequently</option>
+                                        <option value="Non-Travel">Non-Travel</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label for="OverTime">OverTime <span class="req">*</span></label>
+                                    <select id="OverTime" name="OverTime" required>
+                                        <option value="No" selected>No</option>
+                                        <option value="Yes">Yes</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Group 3: Compensation & Stock -->
+                        <div class="form-group-block">
+                            <h3 class="group-title">
+                                <span class="group-icon">💰</span> Compensation & Benefits
+                            </h3>
+                            <div class="input-grid">
+                                <div class="form-field">
+                                    <label for="MonthlyIncome">Monthly Income ($) <span class="req">*</span></label>
+                                    <input type="number" id="MonthlyIncome" name="MonthlyIncome" min="1000" max="30000" step="100" value="5100" required>
+                                    <span class="field-hint">Monthly base salary</span>
+                                </div>
+                                <div class="form-field">
+                                    <label for="StockOptionLevel">Stock Option Level (0 - 3) <span class="req">*</span></label>
+                                    <select id="StockOptionLevel" name="StockOptionLevel" required>
+                                        <option value="0" selected>0 - No Stock Options</option>
+                                        <option value="1">1 - Level 1</option>
+                                        <option value="2">2 - Level 2</option>
+                                        <option value="3">3 - Level 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Group 4: Tenure & Experience -->
+                        <div class="form-group-block">
+                            <h3 class="group-title">
+                                <span class="group-icon">⏳</span> Tenure & Career Experience
+                            </h3>
+                            <div class="input-grid">
+                                <div class="form-field">
+                                    <label for="TotalWorkingYears">Total Working Years <span class="req">*</span></label>
+                                    <input type="number" id="TotalWorkingYears" name="TotalWorkingYears" min="0" max="45" value="7" required>
+                                    <span class="field-hint">Entire career experience</span>
+                                </div>
+                                <div class="form-field">
+                                    <label for="YearsAtCompany">Years at Company <span class="req">*</span></label>
+                                    <input type="number" id="YearsAtCompany" name="YearsAtCompany" min="0" max="40" value="4" required>
+                                    <span class="field-hint">Tenure at this firm</span>
+                                </div>
+                                <div class="form-field">
+                                    <label for="YearsWithCurrManager">Years with Current Manager <span class="req">*</span></label>
+                                    <input type="number" id="YearsWithCurrManager" name="YearsWithCurrManager" min="0" max="30" value="3" required>
+                                    <span class="field-hint">Time with manager</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Group 5: Workplace Satisfaction (1 - 4 Scale) -->
+                        <div class="form-group-block">
+                            <h3 class="group-title">
+                                <span class="group-icon">⭐</span> Satisfaction & Engagement (Scale 1–4)
+                            </h3>
+                            <div class="input-grid">
+                                <div class="form-field">
+                                    <label for="JobSatisfaction">Job Satisfaction <span class="req">*</span></label>
+                                    <select id="JobSatisfaction" name="JobSatisfaction" required>
+                                        <option value="1">1 - Low</option>
+                                        <option value="2">2 - Medium</option>
+                                        <option value="3" selected>3 - High</option>
+                                        <option value="4">4 - Very High</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label for="EnvironmentSatisfaction">Environment Satisfaction <span class="req">*</span></label>
+                                    <select id="EnvironmentSatisfaction" name="EnvironmentSatisfaction" required>
+                                        <option value="1">1 - Low</option>
+                                        <option value="2">2 - Medium</option>
+                                        <option value="3" selected>3 - High</option>
+                                        <option value="4">4 - Very High</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label for="JobInvolvement">Job Involvement <span class="req">*</span></label>
+                                    <select id="JobInvolvement" name="JobInvolvement" required>
+                                        <option value="1">1 - Low</option>
+                                        <option value="2">2 - Medium</option>
+                                        <option value="3" selected>3 - High</option>
+                                        <option value="4">4 - Very High</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="form-actions">
+                            <button type="submit" id="submitBtn" class="btn btn-primary btn-lg">
+                                <span class="btn-text">🔍 Predict Attrition</span>
+                                <span class="btn-spinner hidden"></span>
+                            </button>
+                            <button type="button" id="resetBtn" class="btn btn-secondary">
+                                Reset Form
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Right Column: Results & Insights -->
+            <section class="results-section">
+                <!-- Result Display Card -->
+                <div class="card result-card" id="resultCard">
+                    <div class="card-header">
+                        <h2>Prediction Output</h2>
+                        <span class="badge badge-neutral" id="statusBadge">Awaiting Input</span>
+                    </div>
+
+                    <!-- Placeholder State -->
+                    <div class="placeholder-state" id="placeholderState">
+                        <div class="placeholder-icon">📊</div>
+                        <h3>No Prediction Yet</h3>
+                        <p>Fill out the 15 employee features on the left and click <strong>Predict Attrition</strong> to run the model.</p>
+                    </div>
+
+                    <!-- Output State (Hidden by default) -->
+                    <div class="output-content hidden" id="outputContent">
+                        <!-- Main verdict banner -->
+                        <div class="verdict-banner" id="verdictBanner">
+                            <div class="verdict-icon" id="verdictIcon">⚡</div>
+                            <div class="verdict-text">
+                                <span class="verdict-subtitle">Predicted Outcome</span>
+                                <h3 class="verdict-title" id="verdictTitle">Likely to Stay</h3>
+                                <p class="verdict-desc" id="verdictDesc">Employee is likely to stay with the company.</p>
+                            </div>
+                        </div>
+
+                        <!-- Probability Gauge / Bars -->
+                        <div class="metric-section">
+                            <h4>Probability Breakdown</h4>
+                            
+                            <div class="prob-bar-container">
+                                <div class="prob-label-row">
+                                    <span class="prob-name">Leave Probability (Yes)</span>
+                                    <span class="prob-val" id="leaveProbText">0%</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill fill-danger" id="leaveProbBar" style="width: 0%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="prob-bar-container">
+                                <div class="prob-label-row">
+                                    <span class="prob-name">Stay Probability (No)</span>
+                                    <span class="prob-val" id="stayProbText">100%</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill fill-success" id="stayProbBar" style="width: 100%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Metric Details Grid -->
+                        <div class="metrics-grid">
+                            <div class="metric-box">
+                                <span class="metric-label">Model Class</span>
+                                <span class="metric-val" id="modelClassCode">No (0)</span>
+                            </div>
+                            <div class="metric-box">
+                                <span class="metric-label">Risk Category</span>
+                                <span class="metric-val" id="riskCategoryText">Low Risk</span>
+                            </div>
+                            <div class="metric-box">
+                                <span class="metric-label">Algorithm</span>
+                                <span class="metric-val" id="algorithmText">Logistic Regression</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Card -->
+                <div class="card info-card">
+                    <h3>About the Workflow</h3>
+                    <ul class="workflow-steps">
+                        <li>
+                            <span class="step-num">1</span>
+                            <div><strong>Dataset Balancing</strong>: Original 1470 rows (1233 No / 237 Yes) reduced intelligently to 711 rows (2:1 ratio) using multi-feature bin scoring.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">2</span>
+                            <div><strong>Feature Selection</strong>: 15 key factors selected; categorical variables one-hot encoded (`drop_first=True`) creating 24 model features.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">3</span>
+                            <div><strong>Preprocessing & Scaler</strong>: Continuous features normalized using `StandardScaler`.</div>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
